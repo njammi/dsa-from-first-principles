@@ -22,6 +22,7 @@ things live, and the exact commands to preview and publish. For the fixed rules 
 - `docs/` — the articles (Markdown), by part. Article files: `docs/part-N-name/NN-slug.md`.
 - `mkdocs.yml` — site config **and the nav**. Adding an article = add the file *and* a nav entry here.
 - `docs/index.md` — the landing page (also lists articles; update when adding one).
+- `docs/faq.md` — reader Q&A. **Standing rule:** when the user asks a question about *article content*, append the Q + answer here, grouped by article, each with a Source back-link to the article + section anchor. (Content questions only — not tooling/setup.)
 - Build output goes to `site/` (git-ignored; CI regenerates it).
 
 ## Preview locally (instant, always fresh)
