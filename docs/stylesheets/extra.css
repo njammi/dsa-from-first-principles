@@ -1,0 +1,25 @@
+/* ---- FAQ question styling ----
+   Questions are tagged `{ .faq-q }` (via attr_list). They get an auto-incrementing
+   "Q1. / Q2." number and a colored, bordered treatment so they stand out from the
+   article subheadings. Uses Material's theme variables, so it adapts to light/dark. */
+
+.md-typeset {
+  counter-reset: faq;   /* restart numbering per page; unused on non-FAQ pages */
+}
+
+.md-typeset h3.faq-q {
+  counter-increment: faq;
+  color: var(--md-primary-fg-color);
+  border-left: 0.2rem solid var(--md-primary-fg-color);
+  background-color: color-mix(in srgb, var(--md-primary-fg-color) 8%, transparent);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.1rem;
+  margin-top: 2.75em;
+  scroll-margin-top: 3.5rem;   /* so anchor links don't hide it under the header */
+}
+
+.md-typeset h3.faq-q::before {
+  content: "Q" counter(faq) ". ";
+  font-weight: 700;
+  opacity: 0.75;
+}

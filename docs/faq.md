@@ -10,7 +10,7 @@ Entries are grouped by the article they refer to.
 
 ## Article 01 — How Computer Memory Works
 
-### Why is `my_list[5]` instant, but `5 in my_list` slow?
+### Why is `my_list[5]` instant, but `5 in my_list` slow? { .faq-q }
 
 **Source:** [Article 01 · How Computer Memory Works → *Why Should You Care?*](part-0-foundations/01-how-computer-memory-works.md#why-should-you-care)
 — the article poses this as a teaser: *"Why is `my_list[5]` instant, but `5 in my_list` slow?"*
@@ -51,7 +51,7 @@ the Big-O vocabulary of [Article 03](part-0-foundations/03-big-o-notation.md).) 
 *searching*, by computing an address *from the value itself* — turning the O(n) scan back into
 an ~O(1) jump.
 
-### Why does it matter that every "house" (element) is the same size?
+### Why does it matter that every "house" (element) is the same size? { .faq-q }
 
 **Source:** [Article 01 · How Computer Memory Works → *Real-World Analogy*](part-0-foundations/01-how-computer-memory-works.md#real-world-analogy)
 — from the street-of-houses analogy: *"Every house is the same size. No mansions, no cottages
