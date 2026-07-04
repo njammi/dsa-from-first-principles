@@ -1,0 +1,54 @@
+site_name: Data Structures & Algorithms, From First Principles
+site_description: A beginner-friendly yet technically deep DSA book in Python.
+site_author: njammi
+site_url: https://njammi.github.io/dsa-from-first-principles/
+repo_url: https://github.com/njammi/dsa-from-first-principles
+repo_name: njammi/dsa-from-first-principles
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.instant      # fast SPA-like page loads
+    - navigation.tracking     # URL updates as you scroll
+    - navigation.top          # back-to-top button
+    - navigation.footer       # prev/next article links
+    - toc.follow              # right-hand "on this page" tracks scroll
+    - content.code.copy       # copy button on code blocks
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - admonition                # note/warning callout boxes
+  - pymdownx.details          # collapsible callouts
+  - pymdownx.superfences       # fenced code + nested blocks (keeps ASCII diagrams intact)
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - toc:
+      permalink: true          # clickable ¶ anchors on headings
+  - tables
+  - attr_list
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - "Part 0 — Foundations":
+      - "01 · How Computer Memory Works": part-0-foundations/01-how-computer-memory-works.md
+      - "02 · Dynamic Arrays": part-0-foundations/02-dynamic-arrays.md
