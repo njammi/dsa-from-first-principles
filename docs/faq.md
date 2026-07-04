@@ -50,3 +50,33 @@ the Big-O vocabulary of [Article 03](part-0-foundations/03-big-o-notation.md).) 
 **hash tables** feel magical: they make `x in my_set` behave like *indexing* instead of
 *searching*, by computing an address *from the value itself* — turning the O(n) scan back into
 an ~O(1) jump.
+
+### Why does it matter that every "house" (element) is the same size?
+
+**Source:** [Article 01 · How Computer Memory Works → *Real-World Analogy*](part-0-foundations/01-how-computer-memory-works.md#real-world-analogy)
+— from the street-of-houses analogy: *"Every house is the same size. No mansions, no cottages
+— identical boxes."*
+
+Because equal size is the one assumption that makes the address formula work:
+
+```
+address = base_address + index × element_size
+```
+
+The `index × element_size` is a **multiplication**, and multiplication is just repeated
+addition of an *identical* quantity. It only means "skip over `index` houses" if every house
+is the same width. Same size → you can multiply → one arithmetic step → **O(1)** access.
+
+If houses were different sizes (house 0 takes 3 boxes, house 1 takes 1, house 2 takes 8…),
+there's no formula. To find house 5 you'd have to add up the actual sizes of houses 0–4 to
+know where house 5 even *starts* — and to know those sizes you'd have to go *look at each one*.
+That's a scan of everything before it: **O(n)**, not a single jump. So:
+
+> Same size → multiply → one step → O(1). Different sizes → sum the ones before → walk them → O(n).
+
+"Every house is the same size" isn't a throwaway detail — it *is* the exact property that buys
+constant-time random access. This is also **why Python lists store references** (pointers), not
+the values themselves: a string might need 50 bytes and an integer 28 — different sizes, which
+would break the formula — but a *reference* to each is always the same size, so Python keeps an
+array of equal-sized references and lets the values live elsewhere. (Article 01 hints at this in
+its stretch practice question about why lists store references.)
