@@ -15,7 +15,8 @@ things live, and the exact commands to preview and publish. For the fixed rules 
   - Part 0 · 01 — How Computer Memory Works ✅
   - Part 0 · 02 — Dynamic Arrays ✅
   - Part 0 · 03 — Big-O Notation ✅
-- **Next up:** Part 0 · 04 — Strings.
+  - Part 0 · 04 — Strings ✅
+- **Next up:** Part 0 · 05 — References, Objects & Mutability in Python (final Part 0 article).
 
 ## Where things live
 

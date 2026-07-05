@@ -17,6 +17,7 @@ The mental machinery. Before any data structure, we cover how the machine actual
 1. [How Computer Memory Works (and Why It Makes Arrays Fast)](part-0-foundations/01-how-computer-memory-works.md)
 2. [Dynamic Arrays (Why `append` Is Fast Anyway)](part-0-foundations/02-dynamic-arrays.md)
 3. [Big-O Notation (How We Measure "Fast")](part-0-foundations/03-big-o-notation.md)
+4. [Strings (Arrays of Characters, and Why They're Immutable)](part-0-foundations/04-strings.md)
 
 *More articles are on the way — see the project roadmap.*
 

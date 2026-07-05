@@ -19,7 +19,7 @@ actually represents values. Everything later is a consequence of this part.
 | 01 | How Computer Memory Works (and Why It Makes Arrays Fast) | ✅ | Memory is numbered boxes; `base + i × size` is why indexing is O(1). |
 | 02 | Dynamic Arrays (Why `append` Is Fast Anyway) | ✅ | Fixed memory runs out — doubling + amortized O(1) append. |
 | 03 | Big-O Notation (How We Measure "Fast") | ✅ | Growth, not stopwatch: O(1)/O(n)/O(log n)/O(n²) from first principles. |
-| 04 | Strings (Arrays of Characters, and Why They're Immutable) | ⬜ | Strings as arrays; immutability and the cost of `+` in a loop. |
+| 04 | Strings (Arrays of Characters, and Why They're Immutable) | ✅ | Strings as arrays; immutability and the cost of `+` in a loop. |
 | 05 | References, Objects & Mutability in Python | ⬜ | Names point to objects; why `list` aliasing surprises beginners. |
 
 **Why this order:** Article 01 establishes contiguous memory → 02 shows what happens
