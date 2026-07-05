@@ -188,3 +188,86 @@ stack frames and symbol tables, or Python's `dis` module to see `LOAD_FAST`/`STO
     prints for humans; the running loop only uses the index. That's the whole point of the line
     from Article 01, made concrete: names are for you, numbered locations are for the machine.
     (Exact opcodes vary a little by Python version, but the name-to-slot resolution is the same.)
+
+## Article 02 — Dynamic Arrays
+
+### Why does Python never make you declare a list's size, when the machine underneath demands one? { .faq-q }
+
+**Source:** [Article 02 · Dynamic Arrays → *Why Should You Care?* / *Mental Model*](part-0-foundations/02-dynamic-arrays.md#mental-model)
+— the article poses: *"Why does Python never make you declare a list's size, when the machine
+underneath demands one?"*
+
+You don't escape the requirement — **the list object declares the size *for* you, and keeps
+re-declaring it as you grow.** At every instant a Python list really does own a fixed block of
+a specific capacity in memory; the machine's "give me a size" rule is obeyed — just by CPython's
+list implementation calling the allocator, not by you. When you append past capacity, the list
+picks a new size, allocates a fresh fixed block, copies the elements over, and frees the old one
+— all behind the friendly `.append()`. So the declaration still happens on every resize; the
+list simply does the bookkeeping (tracking `length` and `capacity`) so you never have to.
+"Dynamic array" *is* exactly this: a fixed-size array the runtime silently re-declares as it fills.
+
+You can even watch the hidden capacity with `sys.getsizeof`, which reports the actual bytes the
+list owns:
+
+??? example "See the hidden capacity — it runs ahead of the length"
+
+    ```python
+    import sys
+
+    base = sys.getsizeof([])     # empty-list overhead in bytes
+    slot = 8                     # each slot holds one 8-byte pointer (64-bit CPython)
+
+    lst, prev = [], None
+    for i in range(34):
+        lst.append(i)
+        cap = (sys.getsizeof(lst) - base) // slot
+        if cap != prev:          # print only when capacity actually grows
+            print(f"length={len(lst):2d}  capacity={cap}")
+            prev = cap
+    ```
+
+    Output (CPython 3.12):
+
+    ```
+    length= 1  capacity=4
+    length= 5  capacity=8
+    length= 9  capacity=16
+    length=17  capacity=24
+    length=25  capacity=32
+    length=33  capacity=40
+    ```
+
+    Even a one-element list already *owns* 4 slots. `capacity` always sits at or above `length`
+    — that gap is the pre-bought "room to grow" the article talks about, chosen and managed for
+    you. (CPython grows gently, ~1.125×, not by doubling — see the next question.)
+
+### Could doubling on every resize cause an out-of-memory error even when free memory is available? { .faq-q }
+
+**Source:** [Article 02 · Dynamic Arrays → *Space Complexity*](part-0-foundations/02-dynamic-arrays.md#space-complexity)
+— follow-up to the doubling growth strategy.
+
+**Yes — on three distinct counts.**
+
+1. **The transient old+new spike.** During a resize the old block (size *n*) and the new block
+   (size *2n*) exist *at the same time*, until the copy finishes and the old one is freed. Peak
+   demand is momentarily ~*3n*, even though the settled result (*2n*) would have fit. An
+   allocation can fail although, a moment later, there'd have been room.
+2. **The contiguity requirement + fragmentation.** An array must be one *contiguous* run
+   (Article 01). Even if total free memory ≥ *2n*, it may be split into many smaller
+   non-contiguous holes, so no single *2n* block exists → allocation fails with memory
+   "available." (On 64-bit systems, virtual memory keeps the *virtual* address space contiguous,
+   so this bites far less in practice — but virtual address space can itself fragment/exhaust for
+   very large arrays or on 32-bit.)
+3. **Over-allocation reserves more than the data needs.** Doubling can hold up to ~2× the slots
+   you're actually using. If free memory sits between the data's true size (*n*) and the reserved
+   capacity (*2n*), you OOM even though the *data itself* would have fit — the wasted spare
+   capacity pushed you over.
+
+**Why the growth *factor* matters for memory (not just speed):** with a factor of exactly **2**,
+each new block is always larger than the sum of *all* previously freed blocks, so the allocator
+can never reuse that coalesced freed space — it must keep grabbing fresh memory at the frontier.
+A factor **< 2** (e.g. 1.5, or the golden ratio ≈ 1.618) lets previously-freed blocks eventually
+add up to satisfy a later request, enabling reuse and reducing fragmentation. This is exactly why
+real implementations often avoid 2: **CPython grows lists by only ~1.125×**, C++ `std::vector`
+uses 2 in libstdc++ but 1.5 in MSVC and Facebook's `folly`. So CPython's gentle growth
+deliberately softens all three effects above — while keeping append amortized O(1).

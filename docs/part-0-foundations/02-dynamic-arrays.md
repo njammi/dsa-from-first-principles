@@ -75,6 +75,8 @@ Invariant: **length ≤ capacity, always.** The gap between them is your pre-bou
 
 A dynamic array is just a fixed array plus bookkeeping: *"I own this many boxes, I'm using this many, and when I fill up I'll double."*
 
+This directly answers a question from the top of the article: *why does Python never make you declare a list's size, when the machine underneath demands one?* It doesn't escape that demand — **the list object declares the size for you, and silently re-declares it as you grow.** At every instant your list really does own a fixed block of a specific capacity; CPython's list implementation is the one calling the allocator, tracking `length` and `capacity`, and doing the resize-and-copy dance when you overflow. You're relieved of declaring a size not because the requirement went away, but because the *list* took over that job. "Dynamic array" is exactly that: a fixed-size array the runtime keeps re-declaring behind a friendly `.append()`.
+
 ## Visual Diagram (ASCII)
 
 Building a list one append at a time. `■` = used box, `·` = owned-but-empty box (spare capacity):
