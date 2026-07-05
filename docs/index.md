@@ -22,6 +22,8 @@ The mental machinery. Before any data structure, we cover how the machine actual
 
 **Part 0 is complete.** Part 1 — Linear Structures (starting with the linked list) is on the way — see the project roadmap.
 
+Also see the [**Complexity Reference**](complexity-reference.md) — a lookup table of Big-O for common data structures and algorithms, with the *mechanism* behind every number.
+
 ---
 
 *All code is Python 3. Start with Article 1 and read in order — each builds on the last.*
