@@ -16,7 +16,9 @@ things live, and the exact commands to preview and publish. For the fixed rules 
   - Part 0 · 02 — Dynamic Arrays ✅
   - Part 0 · 03 — Big-O Notation ✅
   - Part 0 · 04 — Strings ✅
-- **Next up:** Part 0 · 05 — References, Objects & Mutability in Python (final Part 0 article).
+  - Part 0 · 05 — References, Objects & Mutability ✅
+- **Part 0 — Foundations: COMPLETE (all 5 published).**
+- **Next up:** Part 1 — Linear Structures, starting with the Linked List (create `docs/part-1-linear-structures/01-linked-lists.md`; add a new nav section in `mkdocs.yml`).
 
 ## Where things live
 

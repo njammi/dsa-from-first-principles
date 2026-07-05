@@ -57,4 +57,5 @@ nav:
       - "02 · Dynamic Arrays": part-0-foundations/02-dynamic-arrays.md
       - "03 · Big-O Notation": part-0-foundations/03-big-o-notation.md
       - "04 · Strings": part-0-foundations/04-strings.md
+      - "05 · References, Objects & Mutability": part-0-foundations/05-references-objects-mutability.md
   - FAQ: faq.md
