@@ -78,3 +78,30 @@ the values themselves: a string might need 50 bytes and an integer 28 — differ
 would break the formula — but a *reference* to each is always the same size, so Python keeps an
 array of equal-sized references and lets the values live elsewhere. (Article 01 hints at this in
 its stretch practice question about why lists store references.)
+
+### Where can I go deeper on how the hardware "activates exactly that box" from an address? { .faq-q }
+
+**Source:** [Article 01 · How Computer Memory Works → *First-Principles Explanation*](part-0-foundations/01-how-computer-memory-works.md#first-principles-explanation)
+— the article states: *"The memory hardware is wired so that if you hand it an address (a number),
+it can activate exactly that box's circuitry directly."* and deliberately says you don't need to
+understand the electronics. If you *want* to, here's the real mechanism and where to learn it.
+
+The concept is **address decoding**. Inside a memory chip, an *address decoder* converts the
+binary address into exactly one "on" signal. A decoder with a `k`-bit address has `2ᵏ` outputs
+and turns on **only one** of them (a "one-hot" output) — that line is the **word line** that
+activates precisely one row of memory cells. For example, feeding address `0101` (5) into a
+4-to-16 decoder switches on output line 5 and no other. Larger memories split the address into
+**row and column** halves and pick the cell at their intersection (a grid/matrix), which is why
+access is direct — it's electrical selection, not searching. This is the physical reason
+indexing is O(1): the address *is* the selection signal.
+
+**References to go deeper:**
+
+- **[Ben Eater — "RAM" (Build an 8-bit computer)](https://eater.net/8bit/ram)** — hands-on and
+  visual: he builds real RAM on breadboards and shows a 4-bit address selecting one of 16 bytes.
+  The most beginner-friendly way to *see* address decoding actually happen. (Video series.)
+- **[Address decoder — Wikipedia](https://en.wikipedia.org/wiki/Address_decoder)** — the precise
+  term and a concise conceptual reference (word lines, one-hot selection, row/column decoding).
+- For a textbook treatment, see the memory chapter of *Digital Design and Computer Architecture*
+  (Harris & Harris) or *Computer Organization and Design* (Patterson & Hennessy); the free
+  **[nand2tetris](https://www.nand2tetris.org/)** course also builds memory from logic gates.
