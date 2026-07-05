@@ -4,8 +4,6 @@
 
 Big-O notation ignores the stopwatch and instead describes the *shape* of how an algorithm's work grows as its input grows — so we can say "this scales well" or "this will fall over" without ever running the code.
 
----
-
 ## Why Should You Care?
 
 We've been quietly cheating. In the last two articles we threw around "O(1)," "O(n)," and "amortized O(1)" as if their meaning were obvious. It's time to pay that debt — because this one idea is the vocabulary the entire rest of the field is written in.
@@ -18,8 +16,6 @@ Here's why it matters more than it first appears:
 
 By the end you'll be able to look at a loop and *know* its cost, and you'll understand why we cheerfully throw away constants and small terms that seem, at first, like they should matter.
 
----
-
 ## Real-World Analogy
 
 Imagine two ways to find a name in a phone book of `n` names.
@@ -29,8 +25,6 @@ Imagine two ways to find a name in a phone book of `n` names.
 **Method B — open to the middle, decide "earlier or later half," throw half away, repeat.** Doubling the book adds just *one more* step. A book of 1,000 names takes ~10 steps; a book of 1,000,000 takes ~20. Doubling the input costs you a single extra glance.
 
 Now the crucial insight: **it does not matter whether you're a fast page-flipper or a slow one.** A world-record flipper using Method A will still, on a big enough book, lose to a sleepy child using Method B. Raw speed (the constant) is a fixed multiplier; the *method's growth shape* is what decides who wins as `n` grows. Big-O measures the shape and deliberately ignores the multiplier — because the shape is what determines the winner at scale.
-
----
 
 ## Problem Statement
 

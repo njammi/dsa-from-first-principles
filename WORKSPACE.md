@@ -56,6 +56,8 @@ site caches for 10 min; hard-refresh or append `?v=N` to force-refresh.
 ## Adding a new article — checklist
 
 1. Write `docs/part-N-.../NN-slug.md` (follow the 20-section structure in PERSONA.md).
+   Do **not** put `---` rules between sections — the styled `##` heading is the divider
+   (see `docs/stylesheets/extra.css`). Keep the single `---` before the "Next up" footer.
 2. Add its nav entry in `mkdocs.yml`.
 3. Add it to the list in `docs/index.md`.
 4. Update status in `ROADMAP.md` and this file.

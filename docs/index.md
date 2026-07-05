@@ -6,8 +6,6 @@ Every topic is built from first principles, in clean Python, following one promi
 
 > You should finish each article thinking *"I finally understand **why** this exists,"* not just *"I know how to use it."*
 
----
-
 ## How this book is organized
 
 Each article follows the same rhythm — **why the problem exists → what the idea is → how it works → the code → the optimization** — with analogies, ASCII diagrams, dry runs, complexity analysis, common mistakes, and interview notes.

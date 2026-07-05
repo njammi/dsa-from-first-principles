@@ -4,8 +4,6 @@
 
 A Python list is secretly a fixed-size array that quietly moves into a bigger home whenever it fills up — and by *doubling* its size each time it moves, it makes `append` feel instant even though occasionally it has to copy everything.
 
----
-
 ## Why Should You Care?
 
 In the last article we learned the machine's dirty secret: an array is a *contiguous* run of equal-sized boxes at a fixed address. That's what makes `my_list[5]` instant.
@@ -18,8 +16,6 @@ But "contiguous and fixed" should bother you. If an array is a fixed run of boxe
 
 Every one of these questions has the same answer, and it's one of the most elegant ideas in all of computer science: **when you run out of room, don't ask for one more box — ask for twice as many.** Understand *why doubling works*, and you'll understand a trick that shows up again in hash tables, string builders, and file buffers for the rest of your career.
 
----
-
 ## Real-World Analogy
 
 Imagine you run a small tea shop with a **shelf that holds exactly 4 jars**. Business is good, so a 5th tea arrives. The shelf is full. What do you do?
@@ -30,8 +26,6 @@ Imagine you run a small tea shop with a **shelf that holds exactly 4 jars**. Bus
 
 You still move jars sometimes. But because each move *doubles* your free space, the moves get rarer and rarer exactly as fast as the shop grows. That's the whole idea of a dynamic array: **occasional expensive moves, spread thin across many cheap insertions.**
 
----
-
 ## Problem Statement
 
 We want a list you can keep appending to — `append(x)` — without ever declaring its size in advance, and we want appending to be *fast*.
@@ -41,8 +35,6 @@ But the machine only gives us **fixed-size arrays**: to allocate memory, you mus
 So the problem is a genuine conflict:
 
 > The hardware offers only fixed-size contiguous arrays. We want an unbounded, growable list. How do we build the second thing out of the first?
-
----
 
 ## First-Principles Explanation
 
@@ -69,8 +61,6 @@ The key mental shift:
 
 > Don't ask "what does one `append` cost in the worst case?" (O(n) — the grow). Ask "what does a *whole sequence* of appends cost, divided evenly?" (O(1) each). Amortized analysis measures the second thing.
 
----
-
 ## Mental Model
 
 Hold two numbers in your head for every dynamic array:
@@ -84,8 +74,6 @@ Invariant: **length ≤ capacity, always.** The gap between them is your pre-bou
 - `append` when **length == capacity**: you're full. Allocate a new run of **2 × capacity** boxes, copy all `length` values over, *then* drop the new value in. Expensive. O(n). But it buys you `capacity` more cheap appends before it happens again.
 
 A dynamic array is just a fixed array plus bookkeeping: *"I own this many boxes, I'm using this many, and when I fill up I'll double."*
-
----
 
 ## Visual Diagram (ASCII)
 
@@ -106,8 +94,6 @@ append(H)  ->  no grow      [A][B][C][D][E][F][G][H]  len 8  cap 8   FULL
 ```
 
 Notice the rhythm: the grows (copies) happen at sizes 1, 2, 4, 8… and the *gaps between them keep doubling*. Between the grow at 4 and the grow at 8, you got **four** free instant appends (D, E via the grow, then F, G, H). The bigger the list, the longer the stretches of pure-cheap appends.
-
----
 
 ## The Naive Solution: grow by one
 
@@ -131,8 +117,6 @@ class GrowByOneArray:
         self._length += 1
 ```
 
----
-
 ## Problems With the Naive Solution
 
 - **Every single append triggers a full copy.** Capacity always equals length, so the array is full *before every insertion*. There is never any spare room.
@@ -142,15 +126,11 @@ class GrowByOneArray:
 
 The flaw is structural: growing by a *constant* amount means the number of grows stays proportional to `n`, and each grow costs up to `n`. Constant + linear cost per grow = quadratic total. We need the grows to become *rare*.
 
----
-
 ## The Better Solution: double the capacity
 
 One change fixes everything: when full, don't allocate `length + 1` — allocate `2 × capacity` (or start at 1 when empty). Now most appends land in pre-bought empty boxes and cost nothing extra; the copies happen at capacities 1, 2, 4, 8, 16… and their total is bounded by `2n`.
 
 Same idea as the tea shelf: buy *double*, so future arrivals slot in free.
-
----
 
 ## Python Implementation
 
@@ -192,8 +172,6 @@ class DynamicArray:
 - `append` — the heart. **First** check if full; if so, grow; **then** place the value. Placing and bumping the length are both O(1). The `if` is true only on the rare grow steps.
 - `_resize` — the expensive part, isolated in one place: allocate a new run, copy the used values, drop the old run. Doubling is the single decision that makes the amortized math work.
 
----
-
 ## Dry Run
 
 Let's append `A, B, C, D` to a fresh `DynamicArray` and watch `_length`, `_capacity`, and copies:
@@ -222,8 +200,6 @@ append(D):
 
 Four appends, only **two** resizes, copying **1 + 2 = 3** values total. Compare the naive version, which would have copied `0+1+2+3 = 6`. The gap looks small at n=4 — but it's the difference between `2n` and `n²/2`, and that gap explodes as n grows.
 
----
-
 ## Time Complexity
 
 | Operation | Worst case (one call) | Amortized (per call over a sequence) |
@@ -236,8 +212,6 @@ Four appends, only **two** resizes, copying **1 + 2 = 3** values total. Compare 
 
 **The doubling series, seen plainly:** `1 + 2 + 4 + 8 + 16 = 31`, which is less than `2 × 16`. The last term always exceeds the sum of everything before it — that's *why* the total is bounded by twice the final size, no matter how big n gets.
 
----
-
 ## Space Complexity
 
 **O(n)** to store `n` items — but with a constant-factor overhead. Because capacity is always a power of two ≥ length, you may own up to nearly **2×** the boxes you're using right at the moment after a doubling. A list of 17 items sits in a run of 32 boxes; 15 are empty.
@@ -246,16 +220,12 @@ This is the fundamental trade of the technique: **you spend spare memory to buy 
 
 (Real CPython is a little thriftier than pure doubling — it over-allocates by roughly 1/8 using the pattern `0, 4, 8, 16, 25, 35, 46, …` — but the principle is identical: grow by a *factor*, not a constant, to get amortized O(1) appends.)
 
----
-
 ## Edge Cases
 
 - **Empty array (`_length == 0`).** Starting capacity is 1, so the very first `append` fills it and the *second* triggers the first resize. (Some implementations start capacity at 0 and treat `0 * 2 = 0` as a special case that jumps to 1 — watch for the `2 * 0 == 0` trap, which would loop forever without a "grow to at least 1" rule.)
 - **Appending `None`.** `None` is a legitimate value, but we also use `None` to mean "empty box." That's why we track `_length` separately — never rely on scanning for `None` to find the end. Length is the source of truth; the sentinel is not.
 - **Reading an unused box.** `get(_length)` or beyond must raise `IndexError`, even though those boxes physically exist and hold `None`. Owning a box ≠ using it.
 - **A single append that overflows into a resize** still returns in the same call — the caller never sees the two-phase (resize, then place) work; it just looks like a normal, if occasionally slower, append.
-
----
 
 ## Common Mistakes
 
@@ -264,8 +234,6 @@ This is the fundamental trade of the technique: **you spend spare memory to buy 
 - **Growing by a constant** (`+1`, `+10`, `+100`). *Any* constant increment gives quadratic total cost — bigger constants just delay the pain, they don't cure it. Only growing by a *factor* (×2, ×1.5) yields amortized O(1). This is the single most important takeaway.
 - **Assuming `insert(0, x)` is also amortized O(1).** Inserting at the *front* must shift every existing element right by one box — that's O(n) *every time*, resize or not. Cheap appends are a property of adding at the *end*. (This is exactly why the next Part introduces linked lists.)
 - **Forgetting the old array is freed.** After a resize, the old run is abandoned and reclaimed by the garbage collector. You don't hold both forever — but you *do* hold both *briefly* during the copy, a real memory spike for huge arrays.
-
----
 
 ## Interview Perspective
 
@@ -277,8 +245,6 @@ Dynamic arrays are a favorite because the answer reveals whether you understand 
 - **The trap:** claiming appends are worst-case O(1). Interviewers wait to see if you say "amortized." Saying it unprompted is a strong signal.
 - **Practical follow-up: "How would you avoid the resize spikes?"** — "Pre-allocate if you know the size" — e.g., building a known-length result — "so you pay one allocation, no mid-loop copies."
 
----
-
 ## Practice Questions
 
 1. **On paper**, list the capacities a doubling array passes through as you append 20 items starting from capacity 1. At which append numbers does a resize happen? How many total value-copies occurred?
@@ -288,8 +254,6 @@ Dynamic arrays are a favorite because the answer reveals whether you understand 
 5. Add `insert(index, value)` and explain, with a dry run, why its worst case is O(n) *regardless* of capacity — and why no growth strategy can fix that.
 6. **Conceptual:** CPython uses the growth pattern `0, 4, 8, 16, 25, 35, 46, 58, 72, …` (over-allocating ~12.5%). Why might a real language choose *less* than doubling? What real-world resource is it being careful with?
 7. **Stretch:** Instrument `_resize` to count total copies while appending `n` items. Plot copies vs. n for the doubling array and the grow-by-one array. Confirm one is linear and the other quadratic.
-
----
 
 ## Key Takeaways
 

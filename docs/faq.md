@@ -6,8 +6,6 @@ answer in context.
 
 Entries are grouped by the article they refer to.
 
----
-
 ## Article 01 — How Computer Memory Works
 
 ### Why is `my_list[5]` instant, but `5 in my_list` slow? { .faq-q }

@@ -4,8 +4,6 @@
 
 Computer memory is one gigantic row of numbered boxes, and almost every "fast" trick in data structures is really just a clever way of using those numbers to jump straight to what you want instead of searching for it.
 
----
-
 ## Why Should You Care?
 
 Here's a promise: if you truly understand this one article, a dozen future topics will feel *obvious* instead of magical.
@@ -16,8 +14,6 @@ Here's a promise: if you truly understand this one article, a dozen future topic
 - Why do textbooks obsess over "contiguous memory"?
 
 Every one of those answers comes from understanding how memory physically works. Most people learn data structures as a list of disconnected facts to memorize. You're going to learn them as consequences of a single simple idea. That's the difference between cramming and *understanding*.
-
----
 
 ## Real-World Analogy
 
@@ -38,8 +34,6 @@ Do you start at house 0 and walk down the street, checking each number until you
 
 That single ability — **"jump straight to house N without walking past the others"** — is the superpower behind arrays. Hold onto this street image. We'll return to it constantly.
 
----
-
 ## Problem Statement
 
 Let's state the fundamental problem that memory (and later, data structures) exists to solve:
@@ -47,8 +41,6 @@ Let's state the fundamental problem that memory (and later, data structures) exi
 > **We have a lot of pieces of data. We need to store them somewhere, and later we need to get them back — ideally fast.**
 
 That's it. Storing and retrieving. Everything in this book is some variation of "how do we store things so that getting them back is fast?" To understand the answer, we first have to understand *where* things are stored.
-
----
 
 ## First-Principles Explanation
 
@@ -106,8 +98,6 @@ So the two things that matter, always, are:
 
 Keep those two questions in mind — they explain everything that follows.
 
----
-
 ## Mental Model
 
 Burn this sentence into your brain:
@@ -121,8 +111,6 @@ Three consequences flow from this, and they are the seeds of half of all data st
 - **"Instant" requires knowing *exactly* where to look** — which usually requires the data to be laid out predictably.
 
 Everything else is detail.
-
----
 
 ## Visual Diagram (ASCII)
 
@@ -151,8 +139,6 @@ Notice each box is 4 addresses apart (imagine each number takes 4 bytes). The va
 
 > **Jargon check.** *Contiguous* just means "right next to each other, in one unbroken run." Houses on our street with no empty lots between them.
 
----
-
 ## The Naive Solution: scattered variables
 
 Suppose you didn't know about arrays and you needed to store 4 test scores. A beginner's instinct might be separate variables:
@@ -166,8 +152,6 @@ score_3 = 7
 
 This *works* for 4 scores. Let's see why it falls apart.
 
----
-
 ## Problems With the Naive Solution
 
 1. **It doesn't scale.** What if you have 10,000 scores? You are not going to type `score_9999`. Ever.
@@ -175,8 +159,6 @@ This *works* for 4 scores. Let's see why it falls apart.
 3. **The values may be scattered.** Nothing guarantees these four variables sit next to each other in memory. Without that predictable layout, there's no "jump straight to item N."
 
 What we *want* is: one name for the whole collection, and the ability to say "the item at position `i`" and get it instantly. That's exactly what an array gives us — by leaning directly on how memory works.
-
----
 
 ## The Better Solution: the array (contiguous boxes + arithmetic)
 
@@ -200,8 +182,6 @@ Let's check it against our diagram (base = 1000, each element = 4 bytes):
 
 > A quick, honest note on Python. In many languages an array literally stores the raw values `5, 8, 3, 7` back-to-back. Python's built-in `list` is a bit fancier: it stores the values elsewhere and keeps a contiguous array of *references* (addresses) pointing to them. Either way, the core fact you care about holds perfectly: **indexing is direct address arithmetic, so `my_list[i]` is instant.** We'll dig into Python lists in their own article. For now, "list = array" is the right mental model.
 
----
-
 ## Python Implementation
 
 Let's make the abstract concrete. We'll simulate memory as a row of boxes, then build a tiny array on top of it that computes addresses exactly like real hardware does. This is a *teaching model*, not how you'd write real code — but it makes the formula tangible.
@@ -221,7 +201,6 @@ class Memory:
     def write(self, address: int, value) -> None:
         """Random access: jump straight to an address and write it."""
         self.slots[address] = value
-
 
 class SimpleArray:
     """An array laid out inside Memory at a known base address."""
@@ -243,7 +222,6 @@ class SimpleArray:
 
     def set(self, index: int, value) -> None:
         self.memory.write(self._address_of(index), value)
-
 
 # --- Using it ---
 ram = Memory(size=16)              # 16 boxes, addresses 0..15
@@ -270,8 +248,6 @@ print(scores.get(2))  # -> 3, found by arithmetic, not searching
 - `get` / `set` — translate an *index* (what you, the human, think in) into an *address* (what memory thinks in), then defer to `Memory`. This mirrors exactly what happens when you write `my_list[i]`.
 - The usage block reserves 4 slots, writes 5, 8, 3, 7, and reads index 2 — which lands directly on the right box with no scanning.
 
----
-
 ## Dry Run
 
 Let's trace `scores.get(2)` step by step. Setup: `base_address = 8`, `element_size = 1`, and we've stored 5, 8, 3, 7 at addresses 8, 9, 10, 11.
@@ -294,8 +270,6 @@ Memory (addresses 8..11):
 
 That "compute once, jump once" is the essence of constant-time indexing.
 
----
-
 ## Time Complexity
 
 (If Big-O is new to you, the short version: it describes how work grows as the data grows. Full article coming next — this is a preview.)
@@ -305,14 +279,10 @@ That "compute once, jump once" is the essence of constant-time indexing.
 
 The contrast between these two lines — O(1) to jump to a *known* position, O(n) to search for an *unknown* one — is one of the most important ideas in this entire book.
 
----
-
 ## Space Complexity
 
 - Storing `n` elements takes **O(n)** space — one box per element, plus a tiny fixed amount for the bookkeeping (`base_address`, `length`, `element_size`). That bookkeeping is **O(1)**: it doesn't grow whether the array holds 4 items or 4 million.
 - The array's power comes *for free* from the layout — computing an address needs no extra storage, just arithmetic.
-
----
 
 ## Edge Cases
 
@@ -321,8 +291,6 @@ The contrast between these two lines — O(1) to jump to a *known* position, O(n
 3. **Empty array (`length = 0`).** Every index is out of range; there's simply nothing to access. Valid state, but nothing to read.
 4. **A "full" collection.** A fixed-size array can't grow past its reserved run of boxes. What happens when you need more? That question is the entire reason **dynamic arrays** exist — the very next structure we'll study.
 
----
-
 ## Common Mistakes
 
 - **Thinking `my_list[i]` searches for the item.** It doesn't. It computes an address and jumps. Say it out loud until it sticks.
@@ -330,8 +298,6 @@ The contrast between these two lines — O(1) to jump to a *known* position, O(n
 - **Assuming all lookups are fast.** Indexing by a *known* position is O(1); *searching* for an unknown value is O(n). Beginners blur these and then can't explain why some code is slow.
 - **Forgetting the "same size, no gaps" requirement.** The address formula only works because elements are equal-sized and contiguous. Break that assumption and O(1) indexing evaporates — which is precisely the trade-off linked lists make (a later article).
 - **Believing memory is infinite or free.** Every box is real, finite, and costs space. Structures earn their speed by *spending* memory wisely.
-
----
 
 ## Interview Perspective
 
@@ -342,8 +308,6 @@ You will rarely be asked "explain RAM" outright. Instead, this knowledge shows u
 - **Follow-up they love:** "How would you make search faster?" — This is your cue to mention sorting (enables binary search, O(log n)) or hashing (turns search back into address computation, ~O(1)). It shows you see the whole landscape.
 - **Common candidate mistake:** claiming "lists are fast" without qualifying *which operation*. Always separate access from search from insertion.
 
----
-
 ## Practice Questions
 
 1. **On paper**, given `base_address = 200` and `element_size = 8` bytes, compute the address of index 0, index 5, and index 12. (Answer: 200, 240, 296.)
@@ -352,8 +316,6 @@ You will rarely be asked "explain RAM" outright. Instead, this knowledge shows u
 4. Add a `find(value)` method that returns the index of a value or `-1` if absent. What is its time complexity, and *why* can't it be O(1)?
 5. **Conceptual:** Our `element_size` was 1. If each element instead needed 4 boxes, what changes in `_address_of`? Trace `get(2)` with `element_size = 4` and `base_address = 8`.
 6. **Stretch:** Why do you think Python lists store *references* to values rather than the values themselves? (Hint: what if one "element" is a huge string and another is a tiny number — can they be the same box size?)
-
----
 
 ## Key Takeaways
 
