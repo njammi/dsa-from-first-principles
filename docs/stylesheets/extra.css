@@ -1,16 +1,37 @@
-/* ---- FAQ question styling ----
-   Questions are tagged `{ .faq-q }` (via attr_list). They get an auto-incrementing
-   "Q1. / Q2." number and a colored, bordered treatment so they stand out from the
-   article subheadings. Uses Material's theme variables, so it adapts to light/dark. */
+/* ============================================================
+   Custom styles for the DSA book (Material for MkDocs)
+   ============================================================ */
 
+/* Heading accent color — derived from the theme's primary color, but lightened
+   in dark mode so it stays readable against the dark background. */
+:root {
+  --heading-accent: var(--md-primary-fg-color);
+}
+[data-md-color-scheme="slate"] {
+  --heading-accent: color-mix(in srgb, var(--md-primary-fg-color) 55%, white);
+}
+
+/* ---- Section headings (h2) in articles ----
+   Color each section heading and add a top rule, so the boundaries between
+   the article's sections are easy to spot when scanning a long page. */
+.md-typeset h2 {
+  color: var(--heading-accent);
+  border-top: 0.075rem solid color-mix(in srgb, var(--heading-accent) 30%, transparent);
+  padding-top: 1.4rem;
+  margin-top: 2.5em;
+}
+
+/* ---- FAQ question headings ----
+   Tagged `{ .faq-q }`. Auto-numbered "Q1. / Q2." with a colored, bordered card
+   so questions stand out from the article-style subheadings. */
 .md-typeset {
   counter-reset: faq;   /* restart numbering per page; unused on non-FAQ pages */
 }
 
 .md-typeset h3.faq-q {
   counter-increment: faq;
-  color: var(--md-primary-fg-color);
-  border-left: 0.2rem solid var(--md-primary-fg-color);
+  color: var(--heading-accent);
+  border-left: 0.2rem solid var(--heading-accent);
   background-color: color-mix(in srgb, var(--md-primary-fg-color) 8%, transparent);
   padding: 0.5rem 0.75rem;
   border-radius: 0.1rem;
