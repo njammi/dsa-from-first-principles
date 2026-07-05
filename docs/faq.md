@@ -147,3 +147,44 @@ execution — the machine still works in addresses/slots, never names.
 in advance (a register or a stack offset), baked it into the instructions, and threw the name
 away. To go deeper, see *Computer Systems: A Programmer's Perspective* (Bryant & O'Hallaron) on
 stack frames and symbol tables, or Python's `dis` module to see `LOAD_FAST`/`STORE_FAST` yourself.
+
+??? example "Run it yourself — watch Python turn names into numbered slots"
+
+    ```python
+    import dis
+
+    def add_them(x):
+        total = 0
+        total = total + x
+        return total
+
+    # The names, in slot order — this is Python's per-function "symbol table":
+    print(add_them.__code__.co_varnames)   # ('x', 'total')
+
+    # The bytecode the interpreter actually runs — names become slot numbers:
+    dis.dis(add_them)
+    ```
+
+    Output (Python 3.12):
+
+    ```
+    ('x', 'total')
+
+      4           2 LOAD_CONST               1 (0)
+                  4 STORE_FAST               1 (total)
+
+      5           6 LOAD_FAST                1 (total)
+                  8 LOAD_FAST                0 (x)
+                 10 BINARY_OP                0 (+)
+                 14 STORE_FAST               1 (total)
+
+      6          16 LOAD_FAST                1 (total)
+                 18 RETURN_VALUE
+    ```
+
+    Read the right-hand column: `x` is **slot 0**, `total` is **slot 1** (matching
+    `co_varnames`). The interpreter never works with the *names* `x`/`total` — it works with
+    the *numbers* `0` and `1`. The `(x)`/`(total)` in parentheses are just a courtesy that `dis`
+    prints for humans; the running loop only uses the index. That's the whole point of the line
+    from Article 01, made concrete: names are for you, numbered locations are for the machine.
+    (Exact opcodes vary a little by Python version, but the name-to-slot resolution is the same.)
