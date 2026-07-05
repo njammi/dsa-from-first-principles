@@ -271,3 +271,48 @@ add up to satisfy a later request, enabling reuse and reducing fragmentation. Th
 real implementations often avoid 2: **CPython grows lists by only ~1.125×**, C++ `std::vector`
 uses 2 in libstdc++ but 1.5 in MSVC and Facebook's `folly`. So CPython's gentle growth
 deliberately softens all three effects above — while keeping append amortized O(1).
+
+## Article 03 — Big-O Notation
+
+### Should a beginner memorize the Big-O of every data structure and algorithm? { .faq-q }
+
+**Source:** [Article 03 · Big-O Notation → *Interview Perspective*](part-0-foundations/03-big-o-notation.md#interview-perspective)
+— a natural question after learning the complexity classes.
+
+**Short answer: no — don't rote-memorize. Understand the mechanism and *derive* it. Build
+fluency in a small core through practice.**
+
+**Why memorization is the wrong default:**
+
+- **It doesn't transfer.** Memorizing "hash lookup is O(1)" leaves you stuck on "why?" or "when
+  is it *not*?" (collisions, resizing). Understand *why* — you compute an address from the value
+  — and you can reason about every variation.
+- **It fails under pressure.** A memorized table evaporates in an interview; a derived one you
+  can reconstruct on the spot.
+- **You can't analyze your own code.** Real work isn't "what's the Big-O of a red-black tree?" —
+  it's "what's the Big-O of *this loop I just wrote?*" No table covers that. The skill this
+  article teaches — *"if I double the input, what happens to the work?"* — is what matters.
+
+**For data structures, learn the mechanism and the complexities fall out for free:**
+
+- Array = contiguous boxes → index O(1), insert-at-front O(n). Both are *consequences* of
+  contiguity (Article 01), not facts to cram.
+- Linked list = nodes joined by references → index O(n), but insert-given-a-node O(1).
+- Hash table = compute an address from the value → search ~O(1) average, O(n) worst.
+
+Understand the handful of core structures and you can *regenerate the entire cheat sheet* from
+scratch — which is the real goal.
+
+**For algorithms, learn the technique and the complexity follows the pattern:**
+
+- Halve the problem each step → O(log n) (binary search). Divide-and-recombine → O(n log n)
+  (merge sort). Nested loop over the same data → O(n²). These are the code *patterns* the article
+  trains you to read.
+- Do keep a few **anchors** — sorting is O(n log n), binary search O(log n), hash lookup ~O(1) —
+  which stick naturally through reuse, not flashcards.
+
+**The honest nuance:** you *should* become **fluent** (able to state the common ones instantly),
+but fluency is the *output* of understanding + solving problems, not the input. Keeping a
+**reference table to look things up** is fine and professional; cramming it is not. The test of
+readiness isn't "can I recite the table?" — it's "hand me arbitrary code and I'll tell you its
+Big-O, and *why*."
